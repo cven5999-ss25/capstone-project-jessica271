@@ -1,0 +1,47 @@
+---
+title: "Data Exploration for Capstone Project"
+author:
+  - name: "Jessica Maina"
+    orcid: "0009-0007-5229-3182"
+    email: "Jessica.Maina@colorado.edu"
+    affiliation:
+      - name: "University of Colorado Boulder"
+        department: "Department of Civil, Environmental and Architectural Engineering"
+        city: "Boulder"
+        state: "CO"
+        country: "USA"
+date: today
+format: html
+editor: visual
+---
+
+# Introduction
+
+The **African Development Corridor Database 2022**, data by Jessica P.R. Thorn, Ben Mwangi and Diego Juffe Bignoli, provides a comprehensive geospatial inventory of planned and existing development corridors across Africa. Published in September 2022 and updated in October 2022, the dataset aims to support research on the environmental, social, and economic impacts of infrastructure expansion on biodiversity, ecosystems, and local communities.
+
+# Methods
+
+## Reading the Data
+
+```{r}
+library(tidyverse)
+library(gapminder)
+library(dplyr)
+library(ggplot2)
+
+my_data <- read_csv(here::here("data/raw/AfricanDevelopmentCorridorDatabase2022.csv"))
+```
+
+## Data Exploration Approach
+
+## Initial Data Tidying
+
+# Results
+
+\[This will be the core of your analysis with specific requirements\]
+
+# Conclusions
+
+## Summary of Findings
+
+## Questions and Next Steps
