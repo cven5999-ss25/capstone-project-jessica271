@@ -218,7 +218,7 @@ $ `Spatial data search`                         &lt;chr&gt; "Yes but not availab
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="co"># clean variable names</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>corridor_data_outline <span class="ot">&lt;-</span> corridor_data <span class="sc">|&gt;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>corridor_data <span class="sc">|&gt;</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(country) <span class="sc">|&gt;</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_corridors =</span> <span class="fu">n</span>(),</span>
@@ -235,7 +235,23 @@ Caused by warning in `mean.default()`:
 ! argument is not numeric or logical: returning NA
 ℹ Run `dplyr::last_dplyr_warnings()` to see the 217 remaining warnings.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(corridor_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 103 × 5
+   country                n_corridors avg_length_km avg_usd_amount latest_launch
+   &lt;chr&gt;                        &lt;int&gt;         &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;        
+ 1 Algeria; Tunisia; Mal…           1            NA             NA 2021         
+ 2 Angola                           5            NA             NA NI           
+ 3 Angola; Democratic Re…           3            NA             NA NI           
+ 4 Angola; Republic of t…           1            NA             NA NI           
+ 5 Angola; Zambia                   1            NA             NA NI           
+ 6 Benin                            2            NA             NA NI           
+ 7 Benin; Niger                     1            NA             NA &lt;NA&gt;         
+ 8 Botswana; Burundi; De…           1            NA             NA 2009         
+ 9 Burkina Faso; Ghana; …           1            NA             NA 1960         
+10 Burkina Faso; Togo               1            NA             NA &lt;NA&gt;         
+# ℹ 93 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(corridor_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "project_code"                              
  [2] "project_name"                              
@@ -266,12 +282,63 @@ Caused by warning in `mean.default()`:
 </div>
 <section id="methods-1" class="level2">
 <h2 class="anchored" data-anchor-id="methods-1">Methods</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>corridor_data <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">launch_year =</span> <span class="fu">as.numeric</span>(launch_year)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `mutate()`.
+ℹ In argument: `launch_year = as.numeric(launch_year)`.
+Caused by warning:
+! NAs introduced by coercion</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 184 × 25
+   project_code project_name corridor_name infrastructure_devel…¹ status country
+   &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;         &lt;chr&gt;                  &lt;chr&gt;  &lt;chr&gt;  
+ 1 AAC0001      Assab-Addis… Assab-Addis … Road                   Opera… Eritre…
+ 2 AAC0002      Port of Ass… Assab-Addis … Port                   Opera… Eritrea
+ 3 ABC0001      Abidjan-Bam… Abidjan-Bama… Road                   Upgra… Côte d…
+ 4 ADC0001      Addis–Djibo… Addis-Djibou… Passenger and freight… Upgra… Djibou…
+ 5 ADC0002      Port of Dji… Addis-Djibou… Port                   Opera… Djibou…
+ 6 ADC0003      Ethiopia–Dj… Addis-Djibou… Road                   Upgra… Djibou…
+ 7 ADC0004      Bole Intern… Addis-Djibou… Airport                Opera… Ethiop…
+ 8 ALC0001      Abidjan-Lag… Abidjan-Lago… Road                   In pr… Cote d…
+ 9 AOC0001      Abidjan-Oua… Abidjan-Ouag… Road                   Opera… Côte d…
+10 AOC0002      Abidjan-Oua… Abidjan-Ouag… Passenger and freight… Upgra… Côte d…
+# ℹ 174 more rows
+# ℹ abbreviated name: ¹​infrastructure_development_type
+# ℹ 19 more variables: region_or_province &lt;chr&gt;, description &lt;chr&gt;,
+#   launch_year &lt;dbl&gt;, usd_amount_million_minimum &lt;chr&gt;,
+#   usd_amount_million_maximum &lt;chr&gt;, amount_description &lt;chr&gt;,
+#   distance_km_minimum &lt;chr&gt;, distance_km_maximum &lt;chr&gt;, gis_distance &lt;dbl&gt;,
+#   area_km2 &lt;chr&gt;, supplier_or_recipient_of_goods_or_services &lt;chr&gt;, …</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>corridor_data <span class="ot">&lt;-</span> corridor_data <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">status =</span> <span class="fu">case_when</span>(</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_to_lower</span>(status) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"completed"</span>, <span class="st">"complete"</span>) <span class="sc">~</span> <span class="st">"completed"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_to_lower</span>(status) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"under construction"</span>, <span class="st">"in progress"</span>) <span class="sc">~</span> <span class="st">"under construction"</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> status</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="co"># lower case for all variables </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="conclusions" class="level1">
 <h1>Conclusions</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(corridor_data, here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/processed/AfricanDevelopmentCorridorDatabase2022_tidied.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <section id="summary-of-findings" class="level2">
 <h2 class="anchored" data-anchor-id="summary-of-findings">Summary of Findings</h2>
+<p>This data cycle has:</p>
+<ul>
+<li><p>Loaded and cleaned the data</p></li>
+<li><p>Explored it with key descriptive statistics</p></li>
+<li><p>Fixed several common data issues (character dates, inconsistent categories, entry errors)</p></li>
+</ul>
 </section>
 <section id="questions-and-next-steps" class="level2">
 <h2 class="anchored" data-anchor-id="questions-and-next-steps">Questions and Next Steps</h2>
