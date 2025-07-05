@@ -46,11 +46,23 @@ glimpse(my_data)
 dim(my_data)
 
 corridor_data <- my_data |>
-  janitor::clean_names()
+  janitor::clean_names() # clean variable names
 
 
+corridor_data_outline <- corridor_data |>
+  group_by(country) |>
+  summarize(
+    n_corridors = n(),
+    avg_length_km = mean(distance_km_maximum, na.rm = TRUE),
+    avg_usd_amount = mean(usd_amount_million_maximum, na.rm = TRUE),
+    latest_launch = max(launch_year, na.rm = TRUE)
+  )
+
+names(corridor_data)
 
 ```
+
+## Methods
 
 # Conclusions
 

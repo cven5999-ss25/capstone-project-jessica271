@@ -215,8 +215,58 @@ $ `Spatial data search`                         &lt;chr&gt; "Yes but not availab
 <pre><code>[1] 184  25</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>corridor_data <span class="ot">&lt;-</span> my_data <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="co"># clean variable names</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>corridor_data_outline <span class="ot">&lt;-</span> corridor_data <span class="sc">|&gt;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(country) <span class="sc">|&gt;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_corridors =</span> <span class="fu">n</span>(),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_length_km =</span> <span class="fu">mean</span>(distance_km_maximum, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_usd_amount =</span> <span class="fu">mean</span>(usd_amount_million_maximum, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">latest_launch =</span> <span class="fu">max</span>(launch_year, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 218 warnings in `summarize()`.
+The first warning was:
+ℹ In argument: `avg_length_km = mean(distance_km_maximum, na.rm = TRUE)`.
+ℹ In group 1: `country = "Algeria; Tunisia; Mali; Niger; Chad; Nigeria"`.
+Caused by warning in `mean.default()`:
+! argument is not numeric or logical: returning NA
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 217 remaining warnings.</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(corridor_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "project_code"                              
+ [2] "project_name"                              
+ [3] "corridor_name"                             
+ [4] "infrastructure_development_type"           
+ [5] "status"                                    
+ [6] "country"                                   
+ [7] "region_or_province"                        
+ [8] "description"                               
+ [9] "launch_year"                               
+[10] "usd_amount_million_minimum"                
+[11] "usd_amount_million_maximum"                
+[12] "amount_description"                        
+[13] "distance_km_minimum"                       
+[14] "distance_km_maximum"                       
+[15] "gis_distance"                              
+[16] "area_km2"                                  
+[17] "supplier_or_recipient_of_goods_or_services"
+[18] "key_beneficiaries"                         
+[19] "commodities_traded_or_transported"         
+[20] "name_of_donors_or_financiers"              
+[21] "amount_funded_usd_millions_per_donor_type" 
+[22] "type_of_major_donors_or_financiers"        
+[23] "spatial_data_availability"                 
+[24] "feature_type"                              
+[25] "spatial_data_search"                       </code></pre>
+</div>
+</div>
+<section id="methods-1" class="level2">
+<h2 class="anchored" data-anchor-id="methods-1">Methods</h2>
+</section>
 </section>
 <section id="conclusions" class="level1">
 <h1>Conclusions</h1>
