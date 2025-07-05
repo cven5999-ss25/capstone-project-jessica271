@@ -26,6 +26,11 @@ The **African Development Corridor Database 2022**, compiled by Jessica P.R. Tho
 ```{r}
 library(tidyverse) # Load package
 
+install.packages("janitor")
+library(janitor)
+
+# Read data
+
 my_data <- read_csv(here::here("data/raw/AfricanDevelopmentCorridorDatabase2022.csv"))
 ```
 
@@ -35,7 +40,17 @@ my_data <- read_csv(here::here("data/raw/AfricanDevelopmentCorridorDatabase2022.
 
 # Results
 
-\[This will be the core of your analysis with specific requirements\]
+```{r}
+glimpse(my_data)
+
+dim(my_data)
+
+corridor_data <- my_data |>
+  janitor::clean_names()
+
+
+
+```
 
 # Conclusions
 
