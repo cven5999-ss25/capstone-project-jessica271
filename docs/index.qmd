@@ -99,3 +99,9 @@ This data cycle has:
 -   Fixed several common data issues (character dates, inconsistent categories, entry errors)
 
 ## Questions and Next Steps
+
+Next steps will include:
+
+Analyzing the data in terms of regions or development type
+
+Data visualization
