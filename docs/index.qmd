@@ -12,7 +12,13 @@ author:
         country: "USA"
 date: today
 format: html
+embed-resources: true
 editor: visual
+execute: 
+  echo: true
+  warning: false
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Introduction
@@ -29,6 +35,8 @@ library(tidyverse) # Load package
 install.packages("janitor")
 library(janitor)
 
+library(stringr)
+
 # Read data
 
 my_data <- read_csv(here::here("data/raw/AfricanDevelopmentCorridorDatabase2022.csv"))
@@ -36,29 +44,56 @@ my_data <- read_csv(here::here("data/raw/AfricanDevelopmentCorridorDatabase2022.
 
 ## Data Exploration Approach
 
-## Initial Data Tidying
-
-# Results
-
 ```{r}
 glimpse(my_data)
 
 dim(my_data)
+```
 
+## Initial Data Tidying
+
+```{r}
 corridor_data <- my_data |>
   janitor::clean_names() # clean variable names
 
-
 corridor_data |>
+  mutate(
+    launch_year = as.numeric(launch_year)  
+  ) # convert character columns to numeric type
+
+
+corridor_data <- corridor_data |>
+  mutate(
+    amount_funded_total = str_extract_all(amount_funded_usd_millions_per_donor_type, "\\d+\\.*\\d*") |> 
+      lapply(as.numeric) |> 
+      sapply(sum, na.rm = TRUE)
+  )
+# str_extract_all extracts all numbers from the observations in  amount_funded_usd_mllions_per_data columns. The \\d+\\.*\\d* extracts all numbers numbers while skiping the NI. 
+# lapply(as.numeric) selects all observations in the list as individuals and convert them to numeric values.
+# sapply(sum, na.rm = TRUE) selects all observations in the list as indviduals and sums them up for each project in a country.  
+
+
+corridor_data <- corridor_data |>
+  mutate(
+    distance_km_maximum = as.numeric(distance_km_maximum),
+    usd_amount_million_maximum = as.numeric(usd_amount_million_maximum),
+    launch_year = as.numeric(launch_year)
+  )
+# final conversion of variables from character data to numeric data needed for data summary
+```
+
+# Results
+
+```{r}
+country_corridor_data <- corridor_data |>
   group_by(country) |>
   summarize(
     n_corridors = n(),
     avg_length_km = mean(distance_km_maximum, na.rm = TRUE),
     avg_usd_amount = mean(usd_amount_million_maximum, na.rm = TRUE),
-    latest_launch = max(launch_year, na.rm = TRUE)
+    latest_launch = max(launch_year, na.rm = TRUE),
+    total_usd_funded = sum(amount_funded_total, na.rm = TRUE)
   )
-
-names(corridor_data)
 
 ```
 
@@ -70,6 +105,9 @@ corridor_data |>
     launch_year = as.numeric(launch_year)
   )
 
+corridor_data |>
+  mutate(amount_funded_usd_millions_per_donor_type = as.numeric(amount_funded_usd_millions_per_donor_type)
+         )
 
 corridor_data <- corridor_data |>
   mutate(
