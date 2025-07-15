@@ -79,7 +79,7 @@ corridor_data <- corridor_data |>
     usd_amount_million_maximum = as.numeric(usd_amount_million_maximum),
     launch_year = as.numeric(launch_year)
   )
-# final conversion of variables from character data to numeric data needed for data summary
+# Final conversion of variables from character data to numeric data needed for data summary
 ```
 
 # Results
@@ -93,22 +93,23 @@ country_corridor_data <- corridor_data |>
     avg_usd_amount = mean(usd_amount_million_maximum, na.rm = TRUE),
     latest_launch = max(launch_year, na.rm = TRUE),
     total_usd_funded = sum(amount_funded_total, na.rm = TRUE)
-  )
+  ) # Summary of the corridor data from 185 rows and 25 columns to 39 rows and 6 columns. 
 
+clean_country_corridor_data <- country_corridor_data |>
+  filter(
+    if_all(everything(), ~ !is.infinite(.) & !is.nan(.))
+  ) # Remove all rows with missing and infinity data (Nan & Inf) for better visualization of the summary data. 
+# if_all() function refers to all columns in a row while everything() refers to all columns in the country_county_data dataset. 
+
+clean_country_corridor_data |>
+  arrange(desc(total_usd_funded)) |>
+  knitr::kable(digits = 1, caption = "Countries by Total USD Funded")
+# Display a clean table of the data summary
 ```
 
 ## Methods
 
 ```{r}
-corridor_data |>
-  mutate(
-    launch_year = as.numeric(launch_year)
-  )
-
-corridor_data |>
-  mutate(amount_funded_usd_millions_per_donor_type = as.numeric(amount_funded_usd_millions_per_donor_type)
-         )
-
 corridor_data <- corridor_data |>
   mutate(
     status = case_when(
