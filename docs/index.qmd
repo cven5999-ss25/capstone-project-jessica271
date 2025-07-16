@@ -34,8 +34,8 @@ library(tidyverse) # Load package
 
 install.packages("janitor")
 library(janitor)
-
 library(stringr)
+library(ggplot2)
 
 # Read data
 
@@ -105,6 +105,27 @@ clean_country_corridor_data |>
   arrange(desc(total_usd_funded)) |>
   knitr::kable(digits = 1, caption = "Countries by Total USD Funded")
 # Display a clean table of the data summary
+
+individual_clean_country_data <- clean_country_corridor_data |>
+  separate_rows(country, sep = ";") |>
+  mutate(country = str_trim(country)) # Split columns with more than one country to individual countries. This is for easier visualisation for each country and its corridors.
+
+
+summary_individual_country_data <- individual_clean_country_data |>
+  group_by(country) |>
+  summarise(
+    n_corridors = n(),
+    avg_length_km = mean(avg_length_km, na.rm = TRUE),
+    avg_usd_amount = mean(avg_usd_amount, na.rm = TRUE),
+    latest_launch = max(latest_launch, na.rm = TRUE),
+    total_usd_funded = sum(total_usd_funded, na.rm = TRUE),
+    .groups = "drop"
+  ) # Summary of the columns with multiple corridors of the same country to make one column for each country.
+
+summary_individual_country_data |>
+  arrange(desc(total_usd_funded)) |>
+  knitr::kable(digits = 1, caption = "Individual Countries by Total USD Funded")
+# A clean table of the final country summary data
 ```
 
 ## Methods

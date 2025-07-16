@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jessica Maina">
-<meta name="dcterms.date" content="2025-07-15">
+<meta name="dcterms.date" content="2025-07-16">
 
 <title>Data Exploration for Capstone Project</title>
 <style>
@@ -2204,7 +2204,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 15, 2025</p>
+      <p class="date">July 16, 2025</p>
     </div>
   </div>
   
@@ -2229,8 +2229,8 @@ vertical-align: -.125em;
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;janitor&quot;</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
@@ -2688,26 +2688,448 @@ $ `Spatial data search`                         &lt;chr&gt; &quot;Yes but not av
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display a clean table of the data summary</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display a clean table of the data summary</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>individual_clean_country_data <span class="ot">&lt;-</span> clean_country_corridor_data <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(country, <span class="at">sep =</span> <span class="st">&quot;;&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> <span class="fu">str_trim</span>(country)) <span class="co"># Split columns with more than one country to individual countries. This is for easier visualisation for each country and its corridors.</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>summary_individual_country_data <span class="ot">&lt;-</span> individual_clean_country_data <span class="sc">|&gt;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(country) <span class="sc">|&gt;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_corridors =</span> <span class="fu">n</span>(),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_length_km =</span> <span class="fu">mean</span>(avg_length_km, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_usd_amount =</span> <span class="fu">mean</span>(avg_usd_amount, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">latest_launch =</span> <span class="fu">max</span>(latest_launch, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_usd_funded =</span> <span class="fu">sum</span>(total_usd_funded, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="co"># Summary of the columns with multiple corridors of the same country to make one column for each country.</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>summary_individual_country_data <span class="sc">|&gt;</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_usd_funded)) <span class="sc">|&gt;</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">1</span>, <span class="at">caption =</span> <span class="st">&quot;Individual Countries by Total USD Funded&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Individual Countries by Total USD Funded</caption>
+<colgroup>
+<col style="width: 31%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 14%">
+<col style="width: 13%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">n_corridors</th>
+<th style="text-align: right;">avg_length_km</th>
+<th style="text-align: right;">avg_usd_amount</th>
+<th style="text-align: right;">latest_launch</th>
+<th style="text-align: right;">total_usd_funded</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Angola</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">848.7</td>
+<td style="text-align: right;">1820.5</td>
+<td style="text-align: right;">2016</td>
+<td style="text-align: right;">12881.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Democratic Republic of Congo</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">797.0</td>
+<td style="text-align: right;">1142.4</td>
+<td style="text-align: right;">2013</td>
+<td style="text-align: right;">7841.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rwanda</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">615.5</td>
+<td style="text-align: right;">4016.5</td>
+<td style="text-align: right;">2017</td>
+<td style="text-align: right;">6541.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Togo</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">760.0</td>
+<td style="text-align: right;">4150.0</td>
+<td style="text-align: right;">1968</td>
+<td style="text-align: right;">5169.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Kenya</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">443.4</td>
+<td style="text-align: right;">2464.5</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: right;">3858.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Algeria</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2192.0</td>
+<td style="text-align: right;">2500.0</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: right;">3848.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Libya</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2192.0</td>
+<td style="text-align: right;">2500.0</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: right;">3848.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Morocco</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2192.0</td>
+<td style="text-align: right;">2500.0</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: right;">3848.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tunisia</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2192.0</td>
+<td style="text-align: right;">2500.0</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: right;">3848.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ethiopia</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2112.0</td>
+<td style="text-align: right;">781.9</td>
+<td style="text-align: right;">2019</td>
+<td style="text-align: right;">3735.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mozambique</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">648.5</td>
+<td style="text-align: right;">713.6</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">3453.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Djibouti</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4404.0</td>
+<td style="text-align: right;">1648.8</td>
+<td style="text-align: right;">2005</td>
+<td style="text-align: right;">3255.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Uganda</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">445.0</td>
+<td style="text-align: right;">2200.0</td>
+<td style="text-align: right;">2015</td>
+<td style="text-align: right;">3026.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cameroon</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3196.2</td>
+<td style="text-align: right;">2244.3</td>
+<td style="text-align: right;">2015</td>
+<td style="text-align: right;">2677.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Zambia</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2303.8</td>
+<td style="text-align: right;">882.4</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">2119.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">South Africa</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">979.2</td>
+<td style="text-align: right;">1932.2</td>
+<td style="text-align: right;">2009</td>
+<td style="text-align: right;">1569.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Central African Republic</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4245.7</td>
+<td style="text-align: right;">1311.1</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">1539.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Malawi</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">557.5</td>
+<td style="text-align: right;">523.0</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">1455.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tanzania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1133.4</td>
+<td style="text-align: right;">490.9</td>
+<td style="text-align: right;">2014</td>
+<td style="text-align: right;">1417.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Chad</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3484.3</td>
+<td style="text-align: right;">1925.0</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">1312.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Guinea</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1011.9</td>
+<td style="text-align: right;">1247.3</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">1134.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Republic of the Congo</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">616.1</td>
+<td style="text-align: right;">569.8</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">1032.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mali</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3028.2</td>
+<td style="text-align: right;">1029.8</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">1025.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Senegal</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4614.0</td>
+<td style="text-align: right;">1835.0</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">830.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Nigeria</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3077.8</td>
+<td style="text-align: right;">2348.3</td>
+<td style="text-align: right;">2015</td>
+<td style="text-align: right;">620.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Democratic Republic of the Congo</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3159.5</td>
+<td style="text-align: right;">2500.0</td>
+<td style="text-align: right;">2015</td>
+<td style="text-align: right;">606.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Zimbabwe</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1984.3</td>
+<td style="text-align: right;">1045.8</td>
+<td style="text-align: right;">2013</td>
+<td style="text-align: right;">501.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Somaliland</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">937.0</td>
+<td style="text-align: right;">231.0</td>
+<td style="text-align: right;">1997</td>
+<td style="text-align: right;">462.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Botswana</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1164.5</td>
+<td style="text-align: right;">2696.9</td>
+<td style="text-align: right;">2009</td>
+<td style="text-align: right;">441.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Egypt</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">12000.0</td>
+<td style="text-align: right;">436.0</td>
+<td style="text-align: right;">1963</td>
+<td style="text-align: right;">436.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Namibia</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3775.0</td>
+<td style="text-align: right;">3380.4</td>
+<td style="text-align: right;">2005</td>
+<td style="text-align: right;">400.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gabon</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">282.0</td>
+<td style="text-align: right;">300.5</td>
+<td style="text-align: right;">2013</td>
+<td style="text-align: right;">300.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cote d’Ivoire</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">985.0</td>
+<td style="text-align: right;">252.0</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">195.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Burundi</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">479.0</td>
+<td style="text-align: right;">633.0</td>
+<td style="text-align: right;">2009</td>
+<td style="text-align: right;">41.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Eritrea</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4405.8</td>
+<td style="text-align: right;">744.0</td>
+<td style="text-align: right;">2019</td>
+<td style="text-align: right;">18.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Benin</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">210.0</td>
+<td style="text-align: right;">140.7</td>
+<td style="text-align: right;">1964</td>
+<td style="text-align: right;">11.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Côte d’Ivoire</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2000.0</td>
+<td style="text-align: right;">1200.0</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">1.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gambia</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2000.0</td>
+<td style="text-align: right;">1200.0</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">1.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ghana</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1950.0</td>
+<td style="text-align: right;">698.6</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">1.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Guinea Bissau</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2000.0</td>
+<td style="text-align: right;">1200.0</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">1.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Liberia</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2000.0</td>
+<td style="text-align: right;">1200.0</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">1.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sierra Leone</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2000.0</td>
+<td style="text-align: right;">1200.0</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">1.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Burkina Faso</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4950.0</td>
+<td style="text-align: right;">833.6</td>
+<td style="text-align: right;">2005</td>
+<td style="text-align: right;">0.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mauritania</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8000.0</td>
+<td style="text-align: right;">1470.0</td>
+<td style="text-align: right;">2005</td>
+<td style="text-align: right;">0.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Niger</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4950.0</td>
+<td style="text-align: right;">833.6</td>
+<td style="text-align: right;">2005</td>
+<td style="text-align: right;">0.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Republic of Congo, Gabon</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">600.0</td>
+<td style="text-align: right;">500.0</td>
+<td style="text-align: right;">2007</td>
+<td style="text-align: right;">0.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sudan</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8000.0</td>
+<td style="text-align: right;">1470.0</td>
+<td style="text-align: right;">2005</td>
+<td style="text-align: right;">0.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A clean table of the final country summary data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="methods-1" class="level2">
 <h2 class="anchored" data-anchor-id="methods-1">Methods</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>corridor_data <span class="ot">&lt;-</span> corridor_data <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">status =</span> <span class="fu">case_when</span>(</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_to_lower</span>(status) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;completed&quot;</span>, <span class="st">&quot;complete&quot;</span>) <span class="sc">~</span> <span class="st">&quot;completed&quot;</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_to_lower</span>(status) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;under construction&quot;</span>, <span class="st">&quot;in progress&quot;</span>) <span class="sc">~</span> <span class="st">&quot;under construction&quot;</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> status</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="co"># lower case for all variables </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>corridor_data <span class="ot">&lt;-</span> corridor_data <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">status =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_to_lower</span>(status) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;completed&quot;</span>, <span class="st">&quot;complete&quot;</span>) <span class="sc">~</span> <span class="st">&quot;completed&quot;</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_to_lower</span>(status) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;under construction&quot;</span>, <span class="st">&quot;in progress&quot;</span>) <span class="sc">~</span> <span class="st">&quot;under construction&quot;</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> status</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="co"># lower case for all variables </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="conclusions" class="level1">
 <h1>Conclusions</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(corridor_data, here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data/processed/AfricanDevelopmentCorridorDatabase2022_tidied.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(corridor_data, here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;data/processed/AfricanDevelopmentCorridorDatabase2022_tidied.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="summary-of-findings" class="level2">
 <h2 class="anchored" data-anchor-id="summary-of-findings">Summary of Findings</h2>
