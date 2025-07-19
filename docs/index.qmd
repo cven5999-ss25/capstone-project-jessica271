@@ -30,7 +30,7 @@ The **African Development Corridor Database 2022**, compiled by Jessica P.R. Tho
 ## Reading the Data
 
 ```{r}
-library(tidyverse) # Load package
+library(tidyverse) # Load R packages
 install.packages("janitor")
 library(janitor)
 library(stringr)
@@ -43,7 +43,7 @@ my_data <- read_csv(here::here("data/raw/AfricanDevelopmentCorridorDatabase2022.
 ## Data Exploration Approach
 
 ```{r}
-glimpse(my_data)
+glimpse(my_data) # Quick data view
 
 dim(my_data)
 ```
@@ -53,11 +53,12 @@ dim(my_data)
 ```{r}
 corridor_data <- my_data |>
   janitor::clean_names() # clean variable names
+# janitor function cleaned the column names by converting them to lowercase and replacing spaces between the words witb underscores
 
 corridor_data |>
   mutate(
     launch_year = as.numeric(launch_year)  
-  ) # convert character columns to numeric type
+  ) # convert character columns to numeric type for visualisation 
 
 
 corridor_data <- corridor_data |>
@@ -75,7 +76,7 @@ corridor_data <- corridor_data |>
     distance_km_maximum = as.numeric(distance_km_maximum),
     usd_amount_million_maximum = as.numeric(usd_amount_million_maximum),
     launch_year = as.numeric(launch_year)
-  ) # Final conversion of variables from character data to numeric data needed for data summary
+  ) # Final conversion of variables from character data to numeric data needed for data summary and visualisation 
 ```
 
 # Results
@@ -94,12 +95,13 @@ country_corridor_data <- corridor_data |>
 clean_country_corridor_data <- country_corridor_data |>
   filter(
     if_all(everything(), ~ !is.infinite(.) & !is.nan(.))
-  ) # Remove all rows with missing and infinity data (Nan & Inf) for better visualization of the summary data. 
+  ) # Removed all rows with missing and infinity data (Nan & Inf) for better visualisation of the summary data. 
 # if_all() function refers to all columns in a row while everything() refers to all columns in the country_county_data dataset. 
 
 clean_country_corridor_data |>
   arrange(desc(total_usd_funded)) |>
-  knitr::kable(digits = 1, caption = "Countries by Total USD Funded") # Display a clean table of the data summary
+  knitr::kable(digits = 1, caption = "Table 1: Countries by Total USD Funded") # Display a clean table of the data summary. This table presents the summary data, that is, countries, number of corridors, average length, total money used, latest launch year and total money funded. The table is arranged in the order of the most money funded to the least. 
+
 
 individual_clean_country_data <- clean_country_corridor_data |>
   separate_rows(country, sep = ";") |>
@@ -119,17 +121,17 @@ summary_individual_country_data <- individual_clean_country_data |>
 
 summary_individual_country_data |>
   arrange(desc(total_usd_funded)) |>
-  knitr::kable(digits = 1, caption = "Individual Countries by Total USD Funded") # A clean table of the final country summary data
+  knitr::kable(digits = 1, caption = "Table 2: Individual Countries by Total USD Funded") # A clean table of the final country summary data. This table represents each country in its own row compared to the above with more than one country in a row. This is to ensure that during data visualisation each country is outlined in it own. 
 
 ggplot(summary_individual_country_data,
        mapping = aes(x = country, y = total_usd_funded)) +
   geom_boxplot(fill = "gray90", outlier.shape = NA) +
   geom_jitter(width = 0.2, aes(color = country), size = 3) +
-  labs(title = "Total USD Funded per Country",
+  labs(title = "Figure 1: Total USD Funded per Country",
        y = "Total USD Funded",
        x = "Country") +
   theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) # Country names to align vertically to avoid overlapping    # A plot combining a boxplot and jitter plot to visualize countries and the total money funded. 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) # Country names to align vertically to avoid overlapping    # This plot visualizes the distribution of total USD funded per country using a boxplot combined with jittered points for individual observations. The boxplot summarizes the spread, median, and potential outliers (hidden), while the jitter points reveal the variation within each country.
 
 summary_individual_country_data |>
   arrange(desc(total_usd_funded)) |>
@@ -137,7 +139,7 @@ summary_individual_country_data |>
   ggplot(aes(x = country, y = total_usd_funded)) +
   geom_boxplot(fill = "gray90", outlier.shape = NA) +
   geom_jitter(width = 0.2, aes(color = country), size = 3) +
-  labs(title = "Total USD Funded per Country",
+  labs(title = "Figure 2: Total USD Funded per Country",
        y = "Total USD Funded",
        x = "Country") +
   theme_minimal() +
@@ -154,7 +156,7 @@ corridor_data <- corridor_data |>
       str_to_lower(status) %in% c("under construction", "in progress") ~ "under construction",
       TRUE ~ status
     )
-  ) # lower case for all variables 
+  ) # lower case names for all variables 
 
 ggplot(summary_individual_country_data,
        mapping = aes(x = country, y = n_corridors, 
@@ -162,41 +164,41 @@ ggplot(summary_individual_country_data,
   geom_point(alpha = 0.8) +
   scale_size_continuous(range = c(3, 10)) +
   scale_color_viridis_c() +
-  labs(title = "Number of Corridors and Length by Country",
+  labs(title = "Figure 3: Number of Corridors and Length by Country",
        x = "Country",
        y = "Number of Corridors",
        size = "Total Length (km)",
        color = "Total Length (km)") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # scatter plot representing countries by the number of their corridors and average length
-# viridis color palette is colour blind friendly 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # This scatter plot shows the number of corridors per country on the y-axis, with countries on the x-axis. Each point's size and color intensity represent the average corridor length in kilometers, larger and darker points indicate longer corridors.
+# Viridis color palette is colour blind friendly 
 
 
 ggplot(summary_individual_country_data, 
        mapping = aes(x = avg_usd_amount, y = total_usd_funded, color = country)) +
   geom_point(size = 4, alpha = 0.8) +
-  labs(title = "Average USD Amount Used vs. Total USD Funded",
+  labs(title = "Figure 4: Average USD Amount Used vs. Total USD Funded",
        x = "Average USD Amount per Country",
        y = "Total USD Funded",
        color = "Country") +
-  theme_minimal() # Scatter plot representing the countries by the total money used in their corridors and the total amount funded. 
+  theme_minimal() # This scatter plot explores the relationship between the average USD amount per country and the total USD funded.
 
 summary_individual_country_data |>
   arrange(desc(total_usd_funded)) |>
   head(10) |>
   ggplot(aes(x = avg_usd_amount, y = total_usd_funded, color = country)) +
   geom_point(size = 4, alpha = 0.8) +
-  labs(title = "Top 10 Countries by Total USD Funded",
+  labs(title = "Figure 5: Top 10 Countries by Total USD Funded",
        x = "Average USD Amount per Corridor",
        y = "Total USD Funded",
        color = "Country") +
-  theme_minimal() # filter to the first 10 countries with the highest amount funded 
+  theme_minimal() # filter to the first 10 countries with the highest amount funded for a clearer reading.  
 
 
 summary_individual_country_data |>
   select(country, n_corridors, latest_launch) |>
   arrange(desc(latest_launch)) |>
-  knitr::kable(digits = 0, caption = "Country Corridors by Latest Launch Year") # Table representing the country corridors in a descending order of the launch years
+  knitr::kable(digits = 0, caption = "Table 3: Country Corridors by Latest Launch Year") # Table showing the country corridors in a descending order of the launch years.
 
 ```
 
