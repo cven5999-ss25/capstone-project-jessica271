@@ -100,7 +100,7 @@ clean_country_corridor_data <- country_corridor_data |>
 
 clean_country_corridor_data |>
   arrange(desc(total_usd_funded)) |>
-  knitr::kable(digits = 1, caption = "Table 1: Countries by Total USD Funded") # Display a clean table of the data summary. This table presents the summary data, that is, countries, number of corridors, average length, total money used, latest launch year and total money funded. The table is arranged in the order of the most money funded to the least. 
+  knitr::kable(digits = 1, caption = "Table 1: Countries by Total USD Funded") # Display a clean table of the data summary. This table presents the summary data, that is, countries, number of corridors, average length, total money used, latest launch year and total money funded. The table is arranged in the order of the most money funded to the least. # From the table, the Benguela Railway corridor shared by Angola and Democratic Republic of Congo received the highest amount of money from donors. 
 
 
 individual_clean_country_data <- clean_country_corridor_data |>
@@ -121,7 +121,7 @@ summary_individual_country_data <- individual_clean_country_data |>
 
 summary_individual_country_data |>
   arrange(desc(total_usd_funded)) |>
-  knitr::kable(digits = 1, caption = "Table 2: Individual Countries by Total USD Funded") # A clean table of the final country summary data. This table represents each country in its own row compared to the above with more than one country in a row. This is to ensure that during data visualisation each country is outlined in it own. 
+  knitr::kable(digits = 1, caption = "Table 2: Individual Countries by Total USD Funded") # A clean table of the final country summary data. This table represents each country in its own row compared to the above with more than one country in a row. This is to ensure that during data visualisation each country is outlined in it own. # From the table, Angola had 2 corridors between 2012 and 2016, which had the highest amount of money funded by donors. The third corridor was shared between Angola and DRC.
 
 ggplot(summary_individual_country_data,
        mapping = aes(x = country, y = total_usd_funded)) +
@@ -131,7 +131,7 @@ ggplot(summary_individual_country_data,
        y = "Total USD Funded",
        x = "Country") +
   theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) # Country names to align vertically to avoid overlapping    # This plot visualizes the distribution of total USD funded per country using a boxplot combined with jittered points for individual observations. The boxplot summarizes the spread, median, and potential outliers (hidden), while the jitter points reveal the variation within each country.
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) # Country names to align vertically to avoid overlapping    # This plot visualizes the distribution of total USD funded per country using a boxplot combined with jittered points for individual observations. The boxplot summarizes the spread, median, and potential outliers (hidden), while the jitter points reveal the variation within each country. Angola has the highest USD funded of 12881.9Usd by donors like Government of Angola. DRC is the second followed by Rwanda and Togo. 
 
 summary_individual_country_data |>
   arrange(desc(total_usd_funded)) |>
@@ -143,7 +143,7 @@ summary_individual_country_data |>
        y = "Total USD Funded",
        x = "Country") +
   theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) # smaller plot with the first 10 countries, in descending order, for a clearer reading 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) # smaller plot with the first 10 countries, in descending order, for a clearer reading. Findings are the same as the above plot. 
 ```
 
 ## Methods
@@ -170,8 +170,7 @@ ggplot(summary_individual_country_data,
        size = "Total Length (km)",
        color = "Total Length (km)") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # This scatter plot shows the number of corridors per country on the y-axis, with countries on the x-axis. Each point's size and color intensity represent the average corridor length in kilometers, larger and darker points indicate longer corridors.
-# Viridis color palette is colour blind friendly 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Viridis color palette is colour blind friendly. # This scatter plot shows the number of corridors per country on the y-axis, with countries on the x-axis. Each point's size and color intensity represent the average corridor length in kilometers, larger and darker points indicate longer corridors. # Eygpt has the longest average corridor length followed by Sudan and Mauritania.
 
 
 ggplot(summary_individual_country_data, 
@@ -192,13 +191,13 @@ summary_individual_country_data |>
        x = "Average USD Amount per Corridor",
        y = "Total USD Funded",
        color = "Country") +
-  theme_minimal() # filter to the first 10 countries with the highest amount funded for a clearer reading.  
+  theme_minimal() # filter to the first 10 countries with the highest amount funded for a clearer reading. From the above two plots, Togo had the most expensive corridor of 4,150 USD followed by  Rwanda with 4,016.5 USD. However, Angola has the highest USD funded of 12881.9 USD followed by DRC.  
 
 
 summary_individual_country_data |>
   select(country, n_corridors, latest_launch) |>
   arrange(desc(latest_launch)) |>
-  knitr::kable(digits = 0, caption = "Table 3: Country Corridors by Latest Launch Year") # Table showing the country corridors in a descending order of the launch years.
+  knitr::kable(digits = 0, caption = "Table 3: Country Corridors by Latest Launch Year") # Table showing the country corridors in a descending order of the launch years. # Algeria has the latest corridor known as Trans-Maghreb Corridor which was launched in 2024. 
 
 ```
 
