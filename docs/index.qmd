@@ -46,6 +46,19 @@ my_data <- read_csv(here::here("data/raw/AfricanDevelopmentCorridorDatabase2022.
 glimpse(my_data) # Quick data view
 
 dim(my_data)
+
+corridors_per_country <- my_data |> 
+  separate_rows(Country, sep = ";") |>
+  mutate(Country = trimws(Country)) |> # Remove extra spaces between the country names
+  count(Country, sort = TRUE)
+
+knitr::kable(corridors_per_country, caption = "Table 0: Number of Corridors per Country") # Table showing number of corridors in eacb country. This includes corridors shared among more than one country and, countries with missing data (NA) and missing information (NI).bKenya has the highest number of corridors followed by Tanzania. 
+
+development_type <- my_data |> 
+  separate_rows(`Infrastructure/development type`, sep = ";") |>
+  mutate(`Infrastructure/development type` = trimws(`Infrastructure/development type`)) |> 
+  count(`Infrastructure/development type`, sort = TRUE) # Roads are the most invested in corridors in Africa to drive development in the continent.
+
 ```
 
 ## Initial Data Tidying
