@@ -19,7 +19,23 @@ execute:
   warning: false
 editor_options: 
   chunk_output_type: console
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
 ---
+
+# Table of Content
+
+1.  Introduction
+2.  Methods\
+      2.1 Reading the Data\
+      2.2 Data Exploration Approach\
+      2.3 Initial Data Tidying
+3.  Results
+4.  Methods
+5.  Conclusions\
+      5.1 Summary of Findings
 
 # Introduction
 
@@ -58,6 +74,20 @@ development_type <- my_data |>
   separate_rows(`Infrastructure/development type`, sep = ";") |>
   mutate(`Infrastructure/development type` = trimws(`Infrastructure/development type`)) |> 
   count(`Infrastructure/development type`, sort = TRUE) # Roads are the most invested in corridors in Africa to drive development in the continent.
+
+# Classification into regions
+region_data <- tibble::tibble(
+  Country = c("Kenya", "Tanzania", "Ethiopia", "Uganda", "Rwanda", "Somaliland",
+              "Nigeria", "Ghana", "Senegal", "Côte d'Ivoire",
+              "South Africa", "Namibia", "Botswana", "Zambia", "Zimbabwe",
+              "Morocco", "Egypt", "Algeria", "Tunisia", "DR Congo", "Cameroon"),
+  Region = c("East Africa", "East Africa", "East Africa", "East Africa", "East Africa", "East Africa",
+             "West Africa", "West Africa", "West Africa", "West Africa",
+             "Southern Africa", "Southern Africa", "Southern Africa", "Southern Africa", "Southern Africa",
+             "North Africa", "North Africa", "North Africa", "North Africa", "Central Africa", "Central Africa")
+) 
+
+region_data <- region_data |> rename_with(str_trim) # Classify each country in terms of its region in Africa. From this East Africa has the highest number of countries investing in the development corridors followed by Southern Africa.
 
 ```
 
@@ -211,6 +241,44 @@ summary_individual_country_data |>
   select(country, n_corridors, latest_launch) |>
   arrange(desc(latest_launch)) |>
   knitr::kable(digits = 0, caption = "Table 3: Country Corridors by Latest Launch Year") # Table showing the country corridors in a descending order of the launch years. # Algeria has the latest corridor known as Trans-Maghreb Corridor which was launched in 2024. 
+
+region_summary <- tibble::tibble(
+  country = c(
+    "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde",
+    "Cameroon", "Central African Republic", "Chad", "Comoros", "Congo", "Côte d'Ivoire",
+    "Democratic Republic of the Congo", "Djibouti", "Egypt", "Equatorial Guinea",
+    "Eritrea", "Eswatini", "Ethiopia", "Gabon", "Gambia", "Ghana", "Guinea", "Guinea Bissau",
+    "Kenya", "Lesotho", "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania",
+    "Mauritius", "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria", "Democratic Republic of the Congo",
+    "Rwanda", "São Tomé and Príncipe", "Senegal", "Seychelles", "Sierra Leone", "Somalia",
+    "South Africa", "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda",
+    "Zambia", "Zimbabwe", "Somaliland", "Republic of Congo, Gabon", "Republic of the Congo", "Democratic Republic of Congo", "Cote d'Ivoire", "Côte d’Ivoire"
+  ),
+  region = c(
+    "North Africa", "Central Africa", "West Africa", "Southern Africa", "West Africa", "East Africa", "West Africa",
+    "Central Africa", "Central Africa", "Central Africa", "East Africa", "Central Africa", "West Africa",
+    "Central Africa", "East Africa", "North Africa", "Central Africa",
+    "East Africa", "Southern Africa", "East Africa", "Central Africa", "West Africa", "West Africa", "West Africa", "West Africa",
+    "East Africa", "Southern Africa", "West Africa", "North Africa", "East Africa", "East Africa", "West Africa", "West Africa",
+    "East Africa", "North Africa", "East Africa", "Southern Africa", "West Africa", "West Africa", "Central Africa",
+    "East Africa", "Central Africa", "West Africa", "East Africa", "West Africa", "East Africa",
+    "Southern Africa", "East Africa", "North Africa", "East Africa", "West Africa", "North Africa", "East Africa",
+    "East Africa", "Southern Africa", "East Africa", "Central Africa", "Central Africa", "Central Africa", "West Africa", "West Africa"
+  )
+) |> rename_with(str_trim) # Classify each country to regions, that is, Central, East, West, North and Southern Africa.
+
+# Join region info to main dataset
+region_summary <- individual_clean_country_data |> 
+  left_join(region_summary, by = "country")
+
+region_summary |>
+  arrange(region) |>
+  knitr::kable(digits = 1, caption = "Table 4: Countries by Average Money Used") # Table showing each region with its corresponding countries and total money used in the development evolution. 
+
+total_money_used_per_region <- region_summary |>
+  group_by(region) |>
+  summarise(total_money_used = sum(avg_usd_amount)) |>
+  arrange(desc(total_money_used)) # Central Africa has the biggest investment of 37,121M USD followed by East Africa with 35,824M USD, West Africa 35,321M USD, Southern Africa 22,134M USD and North Africa with 11,906M USD. 
 
 ```
 
