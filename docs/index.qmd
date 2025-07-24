@@ -10,7 +10,7 @@ author:
         city: "Boulder"
         state: "CO"
         country: "USA"
-date: today
+date: 2025-07-25
 format: html
 embed-resources: true
 editor: visual
@@ -28,54 +28,66 @@ output:
 # Table of Content
 
 1.  Introduction
+
 2.  Methods\
       2.1 Reading the Data\
       2.2 Data Exploration Approach\
       2.3 Initial Data Tidying
+
 3.  Results
-4.  Methods
-5.  Conclusions\
-      5.1 Summary of Findings
+
+    3.1 Section A
+
+    3.2 Section B
+
+4.  Conclusions\
+      4.1 Summary of Findings
 
 # Introduction
 
-The **African Development Corridor Database 2022**, compiled by Jessica P.R. Thorn, Ben Mwangi, and Diego Juffe Bignoli, provides a comprehensive geospatial dataset of planned and existing development corridors across Africa, including roads, railways, pipelines, and ports. Published on Dryad in September 2022 and updated in October 2022, the dataset aims to support research on the environmental, social, and economic impacts of infrastructure expansion on biodiversity, ecosystems, and local communities.
+The **African Development Corridor Database 2022**, compiled by Jessica P.R. Thorn, Ben Mwangi, and Diego Juffe Bignoli, provides a comprehensive geospatial dataset of planned and existing development corridors across Africa, including roads, railways, pipelines, and ports. The dataset aims to support research on the environmental, social, and economic impacts of infrastructure expansion on biodiversity, ecosystems, and local communities in Africa.
 
 # Methods
+
+The database used three methods of data collection. First, use of secondary data from corridor organizations’ websites such as government bodies and regional economic bodies. Second, manual digitization of spatial features and distribution using ArcGIS. Last, technical validation by determining that the present corridors meet quality standards.
 
 ## Reading the Data
 
 ```{r}
-library(tidyverse) # Load R packages
+# Step 1: Load R packages
+library(tidyverse) 
 install.packages("janitor")
 library(janitor)
 library(stringr)
 library(ggplot2)
 
-# Read data
+# Step 2: Read data
 my_data <- read_csv(here::here("data/raw/AfricanDevelopmentCorridorDatabase2022.csv"))
 ```
 
 ## Data Exploration Approach
 
 ```{r}
-glimpse(my_data) # Quick data view
+# Step 1: Quick data view
+glimpse(my_data) 
 
 dim(my_data)
 
+#Step 2: Corridors per country
 corridors_per_country <- my_data |> 
   separate_rows(Country, sep = ";") |>
   mutate(Country = trimws(Country)) |> # Remove extra spaces between the country names
   count(Country, sort = TRUE)
 
-knitr::kable(corridors_per_country, caption = "Table 0: Number of Corridors per Country") # Table showing number of corridors in eacb country. This includes corridors shared among more than one country and, countries with missing data (NA) and missing information (NI).bKenya has the highest number of corridors followed by Tanzania. 
+knitr::kable(corridors_per_country, caption = "Table 0: Number of Corridors per Country") # Table showing number of corridors in eacb country. This includes corridors shared among more than one country and, countries with missing data (NA) and missing information (NI). Kenya has the highest number of corridors followed by Tanzania. 
 
+# Step 3: Highly invested corridor development type
 development_type <- my_data |> 
   separate_rows(`Infrastructure/development type`, sep = ";") |>
   mutate(`Infrastructure/development type` = trimws(`Infrastructure/development type`)) |> 
   count(`Infrastructure/development type`, sort = TRUE) # Roads are the most invested in corridors in Africa to drive development in the continent.
 
-# Classification into regions
+# Step 4: Classification into regions
 region_data <- tibble::tibble(
   Country = c("Kenya", "Tanzania", "Ethiopia", "Uganda", "Rwanda", "Somaliland",
               "Nigeria", "Ghana", "Senegal", "Côte d'Ivoire",
@@ -94,10 +106,12 @@ region_data <- region_data |> rename_with(str_trim) # Classify each country in t
 ## Initial Data Tidying
 
 ```{r}
+# Step 1: Cleaning the columns 
 corridor_data <- my_data |>
   janitor::clean_names() # clean variable names
 # janitor function cleaned the column names by converting them to lowercase and replacing spaces between the words witb underscores
 
+#Step 2: Character variables to numeric data
 corridor_data |>
   mutate(
     launch_year = as.numeric(launch_year)  
@@ -109,10 +123,9 @@ corridor_data <- corridor_data |>
     amount_funded_total = str_extract_all(amount_funded_usd_millions_per_donor_type, "\\d+\\.*\\d*") |> 
       lapply(as.numeric) |> 
       sapply(sum, na.rm = TRUE)
-  ) # str_extract_all extracts all numbers from the observations in  amount_funded_usd_mllions_per_data columns. The \\d+\\.*\\d* extracts all numbers numbers while skiping the NI. 
+  ) # str_extract_all extracts all numbers from the observations in  amount_funded_usd_millions_per_data columns. The \\d+\\.*\\d* extracts all numbers numbers while skiping the NI. 
 # lapply(as.numeric) selects all observations in the list as individuals and convert them to numeric values.
 # sapply(sum, na.rm = TRUE) selects all observations in the list as indviduals and sums them up for each project in a country.  
-
 
 corridor_data <- corridor_data |>
   mutate(
@@ -124,7 +137,10 @@ corridor_data <- corridor_data |>
 
 # Results
 
+## Section A
+
 ```{r}
+# Step 1: Data tidying, summarization and eliminating the NA and NI 
 country_corridor_data <- corridor_data |>
   group_by(country) |>
   summarize(
@@ -141,15 +157,15 @@ clean_country_corridor_data <- country_corridor_data |>
   ) # Removed all rows with missing and infinity data (Nan & Inf) for better visualisation of the summary data. 
 # if_all() function refers to all columns in a row while everything() refers to all columns in the country_county_data dataset. 
 
+# Step 2: Data visualisation for the clean data summary
 clean_country_corridor_data |>
   arrange(desc(total_usd_funded)) |>
   knitr::kable(digits = 1, caption = "Table 1: Countries by Total USD Funded") # Display a clean table of the data summary. This table presents the summary data, that is, countries, number of corridors, average length, total money used, latest launch year and total money funded. The table is arranged in the order of the most money funded to the least. # From the table, the Benguela Railway corridor shared by Angola and Democratic Republic of Congo received the highest amount of money from donors. 
 
-
+# Step 3: Column spliting for the country column
 individual_clean_country_data <- clean_country_corridor_data |>
   separate_rows(country, sep = ";") |>
   mutate(country = str_trim(country)) # Split columns with more than one country to individual countries. This is for easier visualisation for each country and its corridors.
-
 
 summary_individual_country_data <- individual_clean_country_data |>
   group_by(country) |>
@@ -162,10 +178,12 @@ summary_individual_country_data <- individual_clean_country_data |>
     .groups = "drop"
   ) # Summary of the columns with multiple corridors of the same country to make one column for each country.
 
+# Step 4: Data visualisation of money funded per country
 summary_individual_country_data |>
   arrange(desc(total_usd_funded)) |>
   knitr::kable(digits = 1, caption = "Table 2: Individual Countries by Total USD Funded") # A clean table of the final country summary data. This table represents each country in its own row compared to the above with more than one country in a row. This is to ensure that during data visualisation each country is outlined in it own. # From the table, Angola had 2 corridors between 2012 and 2016, which had the highest amount of money funded by donors. The third corridor was shared between Angola and DRC.
 
+# Step 5: Further visualisation of total money funded per country
 ggplot(summary_individual_country_data,
        mapping = aes(x = country, y = total_usd_funded)) +
   geom_boxplot(fill = "gray90", outlier.shape = NA) +
@@ -174,7 +192,7 @@ ggplot(summary_individual_country_data,
        y = "Total USD Funded",
        x = "Country") +
   theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) # Country names to align vertically to avoid overlapping    # This plot visualizes the distribution of total USD funded per country using a boxplot combined with jittered points for individual observations. The boxplot summarizes the spread, median, and potential outliers (hidden), while the jitter points reveal the variation within each country. Angola has the highest USD funded of 12881.9Usd by donors like Government of Angola. DRC is the second followed by Rwanda and Togo. 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) # Country names to align vertically to avoid overlapping    # This plot visualizes the distribution of total USD funded per country using a boxplot combined with jittered points for individual observations. The boxplot summarizes the spread, median, and potential outliers (hidden), while the jitter points reveal the variation within each country. Angola has the highest USD funded of 12881.9M Usd by donors like Government of Angola. DRC is the second followed by Rwanda and Togo. 
 
 summary_individual_country_data |>
   arrange(desc(total_usd_funded)) |>
@@ -182,16 +200,17 @@ summary_individual_country_data |>
   ggplot(aes(x = country, y = total_usd_funded)) +
   geom_boxplot(fill = "gray90", outlier.shape = NA) +
   geom_jitter(width = 0.2, aes(color = country), size = 3) +
-  labs(title = "Figure 2: Total USD Funded per Country",
+  labs(title = "Figure: Total USD Funded per Country",
        y = "Total USD Funded",
        x = "Country") +
   theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) # smaller plot with the first 10 countries, in descending order, for a clearer reading. Findings are the same as the above plot. 
 ```
 
-## Methods
+## Section B
 
 ```{r}
+# Step 1: Lower case for all columns 
 corridor_data <- corridor_data |>
   mutate(
     status = case_when(
@@ -201,25 +220,26 @@ corridor_data <- corridor_data |>
     )
   ) # lower case names for all variables 
 
+# Step 2: Data visualisation of countries per the number of corridors and average length
 ggplot(summary_individual_country_data,
        mapping = aes(x = country, y = n_corridors, 
                size = avg_length_km, color = avg_length_km)) +
   geom_point(alpha = 0.8) +
   scale_size_continuous(range = c(3, 10)) +
   scale_color_viridis_c() +
-  labs(title = "Figure 3: Number of Corridors and Length by Country",
+  labs(title = "Figure 2: Number of Corridors and Length per Country",
        x = "Country",
        y = "Number of Corridors",
        size = "Total Length (km)",
        color = "Total Length (km)") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Viridis color palette is colour blind friendly. # This scatter plot shows the number of corridors per country on the y-axis, with countries on the x-axis. Each point's size and color intensity represent the average corridor length in kilometers, larger and darker points indicate longer corridors. # Eygpt has the longest average corridor length followed by Sudan and Mauritania.
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Viridis color palette is colour blind friendly. # This scatter plot shows the number of corridors per country on the y-axis, with countries on the x-axis. Each point's size and color intensity represent the average corridor length in kilometers, larger and darker points indicate longer corridors. # Egypt has the longest average corridor length followed by Sudan and Mauritania.
 
-
+# Step 3: Data visualisation of the countries per average money used in the corridors and total money funded
 ggplot(summary_individual_country_data, 
        mapping = aes(x = avg_usd_amount, y = total_usd_funded, color = country)) +
   geom_point(size = 4, alpha = 0.8) +
-  labs(title = "Figure 4: Average USD Amount Used vs. Total USD Funded",
+  labs(title = "Figure 3: Average USD Amount Used vs. Total USD Funded",
        x = "Average USD Amount per Country",
        y = "Total USD Funded",
        color = "Country") +
@@ -230,18 +250,19 @@ summary_individual_country_data |>
   head(10) |>
   ggplot(aes(x = avg_usd_amount, y = total_usd_funded, color = country)) +
   geom_point(size = 4, alpha = 0.8) +
-  labs(title = "Figure 5: Top 10 Countries by Total USD Funded",
+  labs(title = "Figure: Top 10 Countries by Total USD Funded",
        x = "Average USD Amount per Corridor",
        y = "Total USD Funded",
        color = "Country") +
-  theme_minimal() # filter to the first 10 countries with the highest amount funded for a clearer reading. From the above two plots, Togo had the most expensive corridor of 4,150 USD followed by  Rwanda with 4,016.5 USD. However, Angola has the highest USD funded of 12881.9 USD followed by DRC.  
+  theme_minimal() # filter to the first 10 countries with the highest amount funded for a clearer reading. From the above two plots, Togo had the most expensive corridor of 4,150M USD followed by  Rwanda with 4,016.5 USD. However, Angola has the highest USD funded of 12881.9M USD followed by DRC.  
 
-
+# Step 4: Data visualisatipn of countries in the order of the latest corridor launch 
 summary_individual_country_data |>
   select(country, n_corridors, latest_launch) |>
   arrange(desc(latest_launch)) |>
   knitr::kable(digits = 0, caption = "Table 3: Country Corridors by Latest Launch Year") # Table showing the country corridors in a descending order of the launch years. # Algeria has the latest corridor known as Trans-Maghreb Corridor which was launched in 2024. 
 
+# Step 5: Classification of the clean data into regions
 region_summary <- tibble::tibble(
   country = c(
     "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde",
@@ -267,7 +288,7 @@ region_summary <- tibble::tibble(
   )
 ) |> rename_with(str_trim) # Classify each country to regions, that is, Central, East, West, North and Southern Africa.
 
-# Join region info to main dataset
+# Step 6: Join region column information to main dataset
 region_summary <- individual_clean_country_data |> 
   left_join(region_summary, by = "country")
 
@@ -285,23 +306,27 @@ total_money_used_per_region <- region_summary |>
 # Conclusions
 
 ```{r}
-write_csv(corridor_data, here::here("data/processed/AfricanDevelopmentCorridorDatabase2022_tidied.csv"))
+write_csv(summary_individual_country_data, here::here("data/processed/AfricanDevelopmentCorridorDatabase2022_tidied.csv"))
 ```
 
 ## Summary of Findings
 
-This data cycle has:
+From the data, the following are the findings:
 
--   Loaded and cleaned the data
+-   Kenya has the highest number of corridors (34) followed by Tanzania with 18 corridors, as shown in Table 0.
 
--   Explored it with key descriptive statistics
+-   East Africa has the highest number of countries investing in the development corridors followed by Southern Africa.
 
--   Fixed several common data issues (character dates, inconsistent categories, entry errors)
+-   Central Africa has the biggest investment of 37,121M USD followed by East Africa with 35,824M USD, West Africa 35,321M USD, Southern Africa 22,134M USD and North Africa with 11,906M USD, as shown in Table 4.
 
-## Questions and Next Steps
+-   Roads are the most invested corridor infrastructure type in Africa to drive development in the continent.
 
-Next steps will include:
+-   The Benguela Railway corridor shared by Angola and Democratic Republic of Congo received the highest amount of money (7,800M USD) from donors such as Government of Angola and Arab Bank of Economic Development in Africa, as shown in Figure 3.
 
-Analyzing the data in terms of regions or development type
+-   Angola has the highest amount of money funded of 12,881.9M Usd while DRC is second followed by Rwanda and Togo, as shown in Figure 1.
 
-Data visualization
+-   Egypt has the longest average corridor length followed by Sudan and Mauritania, as shown in Figure 2.
+
+-   Rwanda and had the most expensive local corridor of 7,400M USD followed by  Botswana, Namibia and South Africa, as shown in Table 4.
+
+-   Algeria has the latest corridor known as Trans-Maghreb Corridor which was launched in 2024, as shown in Table 3.
