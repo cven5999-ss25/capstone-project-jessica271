@@ -11,14 +11,13 @@ author:
         state: "CO"
         country: "USA"
 date: 2025-07-25
-format: 
+format:
   html:
     toc: true
     toc-depth: 2
     embed-resources: true
-    code-fold: true
     code-tools: true
-execute: 
+execute:
   echo: true
   warning: false
   message: false
@@ -28,6 +27,7 @@ editor:
     wrap: 72
 editor_options: 
   chunk_output_type: inline
+output-dir: docs
 ---
 
 # Table of Content
