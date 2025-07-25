@@ -8,21 +8,21 @@ author:
       - name: "University of Colorado Boulder"
         department: "Department of Civil, Environmental and Architectural Engineering"
         city: "Boulder"
-        state: "CO"
+        state: "Colorado"
         country: "USA"
 date: 2025-07-25
-format: 
+format:
   html:
     toc: true
     toc-depth: 2
     embed-resources: true
     self-contained: true
-editor: visual
-editor_options: 
-  chunk_output_type: console
 execute: 
   echo: true
   warning: false
+editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Table of Content
