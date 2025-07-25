@@ -16,11 +16,16 @@ format:
     toc: true
     toc-depth: 2
     embed-resources: true
+    code-fold: true
+    code-tools: true
 execute: 
   echo: true
   warning: false
   message: false
-editor: visual
+editor:
+  visual: true
+  markdown:
+    wrap: 72
 editor_options: 
   chunk_output_type: inline
 ---
@@ -45,11 +50,22 @@ editor_options:
 
 # Introduction
 
-The **African Development Corridor Database 2022**, compiled by Jessica P.R. Thorn, Ben Mwangi, and Diego Juffe Bignoli, provides a comprehensive geospatial dataset of planned and existing development corridors across Africa, including roads, railways, pipelines, and ports. The dataset aims to support research on the environmental, social, and economic impacts of infrastructure expansion on biodiversity, ecosystems, and local communities in Africa.
+The **African Development Corridor Database 2022**, compiled by Jessica
+P.R. Thorn, Ben Mwangi, and Diego Juffe Bignoli, provides a
+comprehensive geospatial dataset of planned and existing development
+corridors across Africa, including roads, railways, pipelines, and
+ports. The dataset aims to support research on the environmental,
+social, and economic impacts of infrastructure expansion on
+biodiversity, ecosystems, and local communities in Africa.
 
 # Methods
 
-The database used three methods of data collection. First, use of secondary data from corridor organizations’ websites such as government bodies and regional economic bodies. Second, manual digitization of spatial features and distribution using ArcGIS. Last, technical validation by determining that the present corridors meet quality standards.
+The database used three methods of data collection. First, use of
+secondary data from corridor organizations’ websites such as government
+bodies and regional economic bodies. Second, manual digitization of
+spatial features and distribution using ArcGIS. Last, technical
+validation by determining that the present corridors meet quality
+standards.
 
 ## Reading the Data
 
@@ -313,20 +329,34 @@ write_csv(summary_individual_country_data, here::here("data/processed/AfricanDev
 
 From the data, the following are the findings:
 
--   Kenya has the highest number of corridors (34) followed by Tanzania with 18 corridors, as shown in Table 0.
+-   Kenya has the highest number of corridors (34) followed by Tanzania
+    with 18 corridors, as shown in Table 0.
 
--   East Africa has the highest number of countries investing in the development corridors followed by Southern Africa.
+-   East Africa has the highest number of countries investing in the
+    development corridors followed by Southern Africa.
 
--   Central Africa has the biggest investment of 37,121M USD followed by East Africa with 35,824M USD, West Africa 35,321M USD, Southern Africa 22,134M USD and North Africa with 11,906M USD, as shown in Table 4.
+-   Central Africa has the biggest investment of 37,121M USD followed by
+    East Africa with 35,824M USD, West Africa 35,321M USD, Southern
+    Africa 22,134M USD and North Africa with 11,906M USD, as shown in
+    Table 4.
 
--   Roads are the most invested corridor infrastructure type in Africa to drive development in the continent.
+-   Roads are the most invested corridor infrastructure type in Africa
+    to drive development in the continent.
 
--   The Benguela Railway corridor shared by Angola and Democratic Republic of Congo received the highest amount of money (7,800M USD) from donors such as Government of Angola and Arab Bank of Economic Development in Africa, as shown in Figure 3.
+-   The Benguela Railway corridor shared by Angola and Democratic
+    Republic of Congo received the highest amount of money (7,800M USD)
+    from donors such as Government of Angola and Arab Bank of Economic
+    Development in Africa, as shown in Figure 3.
 
--   Angola has the highest amount of money funded of 12,881.9M Usd while DRC is second followed by Rwanda and Togo, as shown in Figure 1.
+-   Angola has the highest amount of money funded of 12,881.9M Usd while
+    DRC is second followed by Rwanda and Togo, as shown in Figure 1.
 
--   Egypt has the longest average corridor length followed by Sudan and Mauritania, as shown in Figure 2.
+-   Egypt has the longest average corridor length followed by Sudan and
+    Mauritania, as shown in Figure 2.
 
--   Rwanda and had the most expensive local corridor of 7,400M USD followed by  Botswana, Namibia and South Africa, as shown in Table 4.
+-   Rwanda and had the most expensive local corridor of 7,400M USD
+    followed by  Botswana, Namibia and South Africa, as shown in Table
+    4.
 
--   Algeria has the latest corridor known as Trans-Maghreb Corridor which was launched in 2024, as shown in Table 3.
+-   Algeria has the latest corridor known as Trans-Maghreb Corridor
+    which was launched in 2024, as shown in Table 3.
