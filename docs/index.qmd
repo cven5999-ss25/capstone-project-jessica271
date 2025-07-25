@@ -17,9 +17,10 @@ format:
     toc-depth: 2
     embed-resources: true
     self-contained: true
-execute: 
+execute:
   echo: true
   warning: false
+  error: true
 editor: visual
 editor_options: 
   chunk_output_type: console
