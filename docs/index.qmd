@@ -20,7 +20,6 @@ format:
 execute:
   echo: true
   warning: false
-  error: true
 editor: visual
 editor_options: 
   chunk_output_type: console
