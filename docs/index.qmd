@@ -132,7 +132,7 @@ corridor_data <- corridor_data |>
     distance_km_maximum = as.numeric(distance_km_maximum),
     usd_amount_million_maximum = as.numeric(usd_amount_million_maximum),
     launch_year = as.numeric(launch_year)
-  ) # Final conversion of variables from character data to numeric data needed for data summary and visualisation 
+  ) # Final convertion of variables from character data to numeric data needed for data summary and visualisation 
 ```
 
 # Results
